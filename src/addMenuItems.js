@@ -10,7 +10,6 @@
 // ==/UserScript==
 
 (() => {
-    // window.addEventListener("DOMContentLoaded", () => addItemsToMenu('Accesos/**/ directos'));
 
     // Especifica para cada nuevo acceso directo un objeto {} con dos propiedades:
     //   - su etiqueta visible (label)
@@ -26,20 +25,51 @@
         },
     ];
 
+    // Especifica las etiquetas visibles de los accesos directos que se quieren quitar (array)
+    const accesosDirectosAQuitar = [
+      'Perfil del contratante',
+    ]
+    /*
+        window.addEventListener("DOMContentLoaded", () => {
+            addItemsToMenu('Accesos directos', newAccesosDirectos);
+            removeItemsFromMenu('Accesos directos', accesosDirectosAQuitar
+        });
+    */
+
     addItemsToMenu('Accesos directos', newAccesosDirectos);
+    removeItemsFromMenu('Accesos directos', accesosDirectosAQuitar);
 
     function addItemsToMenu(menuText, newItems) {
+        let menu = findMenu(menuText)
+        if (! menu) {
+            alert("No he podido encontrar el punto de donde eliminar las opciones del menú")
+        }
+        let dest = menu?.getElementsByTagName("ul");
+        if (dest) {
+            let newItemsHTML = newItems.reduce((html, m) => html + `<li class="menu-item menu-item-type-post_type menu-item-object-page">` +
+                  `<a href="${m.href}" class="elementor-sub-item">${m.label}</a></li>`, '')
+            dest[0].innerHTML += newItemsHTML;
+        }
+    }
+
+
+    function removeItemsFromMenu(menuText, itemsToRemove) {
+        let menu = findMenu(menuText)
+        if (! menu) {
+            alert("No he podido encontrar el punto de donde eliminar las opciones del menú")
+        }
+        let lis = menu?.getElementsByTagName("li");
+        if (lis) {
+            [...lis].forEach(l => { if (itemsToRemove.includes(l.innerText))
+                                      l.remove();
+                                  })
+        }
+    }
+
+    function findMenu(menuText) {
         let menus = document.querySelectorAll("li.menu-item.menu-item-type-custom.menu-item-object-custom.menu-item-has-children")
         if (menus.length) {
-            let dest = [...menus].filter(m => m.innerText === menuText)[0];
-            dest = dest?.getElementsByTagName("ul");
-            if (dest) {
-                let newItemsHTML = newItems.reduce((html, m) => html + `<li class="menu-item menu-item-type-post_type menu-item-object-page">` +
-                  `<a href="${m.href}" class="elementor-sub-item">${m.label}</a></li>`, '')
-                dest[0].innerHTML += newItemsHTML;
-            }
-        } else {
-            alert("No he podido encontrar el punto donde anclar las nuevas opciones del menú")
+            return [...menus].filter(m => m.innerText === menuText)[0];
         }
     }
 })()

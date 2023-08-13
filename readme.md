@@ -1,7 +1,8 @@
 # Ampliar Accesos Directos en unirioja.es
 
 Este es un script para TamperMonkey para añadir nuevas entradas de menú en el menú de accesos 
-directos de la web de unirioja.es.
+directos de la web de unirioja.es. Y, añadido en una nueva versión, también para quitar 
+accesos directos que aparecen en la página web original y que no se usan. 
 
 Para lograrlo hay que
 
@@ -11,6 +12,7 @@ Para lograrlo hay que
 2. Acceder a la extensión (depende de cada navegador) y en la opción "Agregar nuevo script" copiar y pegar el script que aparece más abajo, adapatando los accesos directos a las necesidades de cada uno (ver pto. 4). Guardar (menú Archivo -> Guardar)
 3. En este script se configura la ejecución del código para cualquier URL de www.unirioja.es (https://www.unirioja.es/*)
 4. Los nuevos items del menú se configuran en la estructura de datos `newAccesosDirectos`, especificando para cada entrada su etiqueta visible (`label`) y su dirección (`href`)
+5. Los accesos directos que se deseen quitar se configuran en el array `accesosDirectosAQuitar`, incluyendo en él los texto de los accesos directos a quitar
 
 **DISCLAIMER**
 
@@ -20,9 +22,15 @@ un rediseño o versionado de la web, el script dejará de funcionar. Por favor, 
 [por email](email:francisco.garcia@unirioja.es) si detectas tan catastrófico suceso y trataré de 
 parchearlo.
 
-## Edición del script. Añadir más entradas al menú
+## Edición del script. Añadir, o quitar, más accesos directos
 
-Si quieres añadir nuevos items al script una vez configurado este, accede a la extensión del TamperMonkey en el navegador, entra en "Dashboard" y edita el script llamado "Add New Menu Items to UR". Procede como se indica en el anterior punto 4 para añadir más opciones al menú, o quitar alguna de las que hayas añadido antes
+Si quieres añadir nuevos items al script una vez configurado este, accede a la extensión del 
+TamperMonkey en el navegador, entra en "Dashboard" y edita el script llamado 
+"Add New Menu Items to UR". Procede como se indica en el anterior punto 4 para añadir 
+más opciones al menú, o quitar alguna de las que hayas añadido antes.
+
+Y si lo que quieres es cambiar los accesos directos a quitar de la página web original, procede 
+como se indica en el anterior punto 5. 
 
 ## El código del script
 
@@ -39,7 +47,6 @@ Si quieres añadir nuevos items al script una vez configurado este, accede a la 
 // ==/UserScript==
 
 (() => {
-    // window.addEventListener("DOMContentLoaded", () => addItemsToMenu('Accesos/**/ directos'));
 
     // Especifica para cada nuevo acceso directo un objeto {} con dos propiedades:
     //   - su etiqueta visible (label)
@@ -55,20 +62,45 @@ Si quieres añadir nuevos items al script una vez configurado este, accede a la 
         },
     ];
 
+    // Especifica las etiquetas visibles de los accesos directos que se quieren quitar (array)
+    const accesosDirectosAQuitar = [
+      'Perfil del contratante',
+    ]
+
     addItemsToMenu('Accesos directos', newAccesosDirectos);
+    removeItemsFromMenu('Accesos directos', accesosDirectosAQuitar);
 
     function addItemsToMenu(menuText, newItems) {
+        let menu = findMenu(menuText)
+        if (! menu) {
+            alert("No he podido encontrar el punto de donde eliminar las opciones del menú")
+        }
+        let dest = menu?.getElementsByTagName("ul");
+        if (dest) {
+            let newItemsHTML = newItems.reduce((html, m) => html + `<li class="menu-item menu-item-type-post_type menu-item-object-page">` +
+                  `<a href="${m.href}" class="elementor-sub-item">${m.label}</a></li>`, '')
+            dest[0].innerHTML += newItemsHTML;
+        }
+    }
+
+
+    function removeItemsFromMenu(menuText, itemsToRemove) {
+        let menu = findMenu(menuText)
+        if (! menu) {
+            alert("No he podido encontrar el punto de donde eliminar las opciones del menú")
+        }
+        let lis = menu?.getElementsByTagName("li");
+        if (lis) {
+            [...lis].forEach(l => { if (itemsToRemove.includes(l.innerText))
+                                      l.remove();
+                                  })
+        }
+    }
+
+    function findMenu(menuText) {
         let menus = document.querySelectorAll("li.menu-item.menu-item-type-custom.menu-item-object-custom.menu-item-has-children")
         if (menus.length) {
-            let dest = [...menus].filter(m => m.innerText === menuText)[0];
-            dest = dest?.getElementsByTagName("ul");
-            if (dest) {
-                let newItemsHTML = newItems.reduce((html, m) => html + `<li class="menu-item menu-item-type-post_type menu-item-object-page">` +
-                    `<a href="${m.href}" class="elementor-sub-item">${m.label}</a></li>`, '')
-                dest[0].innerHTML += newItemsHTML;
-            }
-        } else {
-            alert("No he podido encontrar el punto donde anclar las nuevas opciones del menú")
+            return [...menus].filter(m => m.innerText === menuText)[0];
         }
     }
 })()
