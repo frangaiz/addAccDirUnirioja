@@ -1,4 +1,4 @@
-# Ampliar Accesos Directos en unirioja.es
+# Cambiar Accesos Directos en unirioja.es
 
 Este es un script para TamperMonkey para añadir nuevas entradas de menú en el menú de accesos 
 directos de la web de unirioja.es. Y, añadido en una nueva versión, también para quitar 
@@ -60,15 +60,38 @@ como se indica en el anterior punto 5.
             label: 'Portal de servicios',
             href: 'https://www.unirioja.es/portal'
         },
+        {
+            label: 'Portal de la Investigación',
+            href: 'https://investigacion.unirioja.es/investigadores'
+        },
+        {
+            label: 'G.I.I.',
+            href: 'https://www.unirioja.es/grados-y-dobles-grados/grado-en-ingenieria-informatica/'
+        },
     ];
 
     // Especifica las etiquetas visibles de los accesos directos que se quieren quitar (array)
     const accesosDirectosAQuitar = [
-      'Perfil del contratante',
+        'Dialnet',
+        'Perfil del contratante',
     ]
 
-    addItemsToMenu('Accesos directos', newAccesosDirectos);
+    const findMenu = (function () {
+        let menuCache = {}
+        return function(menuText) {
+            let menu = menuCache[menuText]
+            if (!menu) {
+                let menus = document.querySelectorAll("li.menu-item.menu-item-type-custom.menu-item-object-custom.menu-item-has-children")
+                if (menus.length) {
+                    menu = [...menus].filter(m => m.innerText === menuText)[0];
+                }
+            }
+            return menu;
+        }
+    })();
+
     removeItemsFromMenu('Accesos directos', accesosDirectosAQuitar);
+    addItemsToMenu('Accesos directos', newAccesosDirectos);
 
     function addItemsToMenu(menuText, newItems) {
         let menu = findMenu(menuText)
@@ -94,13 +117,6 @@ como se indica en el anterior punto 5.
             [...lis].forEach(l => { if (itemsToRemove.includes(l.innerText))
                                       l.remove();
                                   })
-        }
-    }
-
-    function findMenu(menuText) {
-        let menus = document.querySelectorAll("li.menu-item.menu-item-type-custom.menu-item-object-custom.menu-item-has-children")
-        if (menus.length) {
-            return [...menus].filter(m => m.innerText === menuText)[0];
         }
     }
 })()
