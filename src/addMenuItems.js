@@ -11,7 +11,7 @@
 
 (() => {
 
-    // Especifica para cada nuevo acceso directo un objeto {} con dos propiedades:
+    // Especifica para cada nueva entrada de menú un objeto {} con dos propiedades:
     //   - su etiqueta visible (label)
     //   - y su dirección (href)
     const newAccesosDirectos = [
@@ -33,7 +33,7 @@
         },
     ];
 
-    // Especifica las etiquetas visibles de los accesos directos que se quieren quitar (array)
+    // Especifica las etiquetas visibles de las entradas de menú que se quieren quitar (array)
     const accesosDirectosAQuitar = [
         'Dialnet',
         'Perfil del contratante',
@@ -47,26 +47,30 @@
                 let menus = document.querySelectorAll("li.menu-item.menu-item-type-custom.menu-item-object-custom.menu-item-has-children")
                 if (menus.length) {
                     menu = [...menus].filter(m => m.innerText === menuText)[0];
+                    menuCache[menuText] = menu
                 }
             }
             return menu;
         }
     })();
 
+    // Llamadas a las funciones que cambian los menús
     removeItemsFromMenu('Accesos directos', accesosDirectosAQuitar);
     addItemsToMenu('Accesos directos', newAccesosDirectos);
-    /*
-        window.addEventListener("DOMContentLoaded", () => {
-            addItemsToMenu('Accesos directos', newAccesosDirectos);
-            removeItemsFromMenu('Accesos directos', accesosDirectosAQuitar
-        });
-    */
+
+    // window.addEventListener("DOMContentLoaded", () => {
+    //     addItemsToMenu('Accesos directos', newAccesosDirectos);
+    //     removeItemsFromMenu('Accesos directos', accesosDirectosAQuitar);
+    // });
 
     function addItemsToMenu(menuText, newItems) {
         let menu = findMenu(menuText)
+
         if (! menu) {
-            alert("No he podido encontrar el punto de donde eliminar las opciones del menú")
+            alertMenuNotFound(menuText)
+            return
         }
+
         let dest = menu?.getElementsByTagName("ul");
         if (dest) {
             let newItemsHTML = newItems.reduce((html, m) => html + `<li class="menu-item menu-item-type-post_type menu-item-object-page">` +
@@ -78,14 +82,21 @@
 
     function removeItemsFromMenu(menuText, itemsToRemove) {
         let menu = findMenu(menuText)
+
         if (! menu) {
-            alert("No he podido encontrar el punto de donde eliminar las opciones del menú")
+            alertMenuNotFound(menuText)
+            return
         }
+
         let lis = menu?.getElementsByTagName("li");
         if (lis) {
             [...lis].forEach(l => { if (itemsToRemove.includes(l.innerText))
                                       l.remove();
                                   })
         }
+    }
+
+    function alertMenuNotFound(menuText) {
+        alert("No he podido encontrar el punto de donde eliminar las opciones del menú '"+menuText+"'")
     }
 })()
