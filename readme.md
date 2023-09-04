@@ -9,10 +9,11 @@ Para lograrlo hay que
 1. Instalar TamperMonkey como extensión del navegador
    - de Firefox ([TamperMonkey](https://addons.mozilla.org/es/firefox/addon/tampermonkey/?utm_source=addons.mozilla.org)) 
    - de Google Chrome ([TamperMonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo))
-2. Acceder a la extensión (depende de cada navegador) y en la opción "Agregar nuevo script" copiar y pegar el script que aparece más abajo, adapatando los accesos directos a las necesidades de cada uno (ver pto. 4). Guardar (menú Archivo -> Guardar)
+   - de Edge ([TamperMonkey](https://www.bing.com/ck/a?!&&p=f0de5d052d8fff23JmltdHM9MTY5Mzc4NTYwMCZpZ3VpZD0zZmRlYzYwZC1hN2FkLTZhMDgtMDEyMy1kN2ZjYTY4NjZiMjgmaW5zaWQ9NTIwNw&ptn=3&hsh=3&fclid=3fdec60d-a7ad-6a08-0123-d7fca6866b28&psq=ampermonket+edge&u=a1aHR0cHM6Ly9taWNyb3NvZnRlZGdlLm1pY3Jvc29mdC5jb20vYWRkb25zL2RldGFpbC90YW1wZXJtb25rZXkvaWlrbWtqbXBhYWRhb2JhaG1sZXBlbG9lbmRuZGZwaGQ&ntb=1))
+2. Acceder a la extensión (depende de cada navegador) y en la opción "Agregar nuevo script" copiar y pegar el script que aparece más abajo, adaptando los accesos directos a las necesidades de cada uno (ver pto. 4). Guardar (menú Archivo -> Guardar)
 3. En este script se configura la ejecución del código para cualquier URL de www.unirioja.es (https://www.unirioja.es/*)
-4. Los nuevos items del menú se configuran en la estructura de datos `newAccesosDirectos`, especificando para cada entrada su etiqueta visible (`label`) y su dirección (`href`)
-5. Los accesos directos que se deseen quitar se configuran en el array `accesosDirectosAQuitar`, incluyendo en él los texto de los accesos directos a quitar
+4. Los nuevos ítems del menú se configuran en la estructura de datos `newAccesosDirectos`, especificando para cada entrada su etiqueta visible (`label`) y su dirección (`href`)
+5. Los accesos directos que se deseen quitar se configuran en el array `accesosDirectosAQuitar`, incluyendo en él los textos de los accesos directos a quitar
 
 **DISCLAIMER**
 
@@ -24,7 +25,7 @@ parchearlo.
 
 ## Edición del script. Añadir, o quitar, más accesos directos
 
-Si quieres añadir nuevos items al script una vez configurado este, accede a la extensión del 
+Si quieres añadir nuevos ítems al script una vez configurado este, accede a la extensión del 
 TamperMonkey en el navegador, entra en "Dashboard" y edita el script llamado 
 "Add New Menu Items to UR". Procede como se indica en el anterior punto 4 para añadir 
 más opciones al menú, o quitar alguna de las que hayas añadido antes.
