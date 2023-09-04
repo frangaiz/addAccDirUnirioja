@@ -97,6 +97,7 @@
     }
 
     function alertMenuNotFound(menuText) {
-        alert("No he podido encontrar el punto de donde eliminar las opciones del menú '"+menuText+"'")
+        console.error("No he podido encontrar el menú '"+menuText+"' para modificar sus opciones")
+        // alert("No he podido encontrar el menú '"+menuText+"' para modificar sus opciones")
     }
 })()
